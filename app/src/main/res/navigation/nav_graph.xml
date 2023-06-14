@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/DiscoveryFragment">
+
+    <fragment
+        android:id="@+id/DiscoveryFragment"
+        android:name="com.manuel.movieapp.discover.DiscoverFragment"
+        android:label="@string/discover_fragment_label"
+        tools:layout="@layout/fragment_discover">
+        <action
+            android:id="@+id/action_DiscoveryFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/movieDetailFragment"
+        android:name="com.manuel.movieapp.movie.MovieDetailFragment"
+        android:label="MovieDetailFragment" >
+        <argument
+            android:name="movieId"
+            app:argType="integer" />
+    </fragment>
+</navigation>
