@@ -16,6 +16,9 @@ class MovieDetailVM @Inject constructor(
     private val _movie: MutableStateFlow<Movie?> = MutableStateFlow(null)
     val movie: StateFlow<Movie?> = _movie.asStateFlow()
 
+    private val _similar: MutableStateFlow<List<Movie>> = MutableStateFlow(emptyList())
+    val similar: StateFlow<List<Movie>> = _similar.asStateFlow()
+
     fun getMovie(movieId: Int) {
         viewModelScope.launch {
             when (val result = movieRepository.getMovie(movieId)) {
@@ -25,9 +28,13 @@ class MovieDetailVM @Inject constructor(
 
                 is MovieResponse.Success -> {
                     _movie.value = result.movie
+                    getSimilarMovies(movieId)
                 }
             }
         }
+    }
 
+    private suspend fun getSimilarMovies(movieId: Int) {
+        _similar.value = movieRepository.getSimilarMovies(movieId)
     }
 }

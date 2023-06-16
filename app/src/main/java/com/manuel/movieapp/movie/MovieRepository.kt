@@ -1,6 +1,7 @@
 package com.manuel.movieapp.movie
 
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.manuel.movieapp.BuildConfig
 import com.manuel.movieapp.common.Movie
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,30 @@ class MovieRepository @Inject constructor(
                 }
                response
             }
+        }
+    }
+
+    suspend fun getSimilarMovies(movieId: Int): List<Movie> {
+        return withContext(Dispatchers.IO) {
+            val request = Request.Builder()
+                .url("$url/$movieId/similar")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer ${BuildConfig.API_KEY}")
+                .build()
+
+            var movies: Array<Movie> = emptyArray()
+
+            client.newCall(request).execute().use {
+                if (it.isSuccessful) {
+                    val gson = Gson()
+                    val body = gson.fromJson(it.body!!.string(), JsonObject::class.java)
+
+                    movies = gson.fromJson(body["results"], Array<Movie>::class.java)
+                }
+            }
+
+            return@withContext movies.toList()
         }
     }
 }

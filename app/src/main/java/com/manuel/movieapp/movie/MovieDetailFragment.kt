@@ -1,19 +1,28 @@
 package com.manuel.movieapp.movie
 
+import android.content.Context
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.google.android.material.elevation.SurfaceColors
 import com.manuel.movieapp.MoviesApplication
 import com.manuel.movieapp.R
 import com.manuel.movieapp.databinding.FragmentMovieDetailBinding
+import com.manuel.movieapp.discover.MovieAdapter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 class MovieDetailFragment : Fragment() {
 
@@ -64,7 +73,55 @@ class MovieDetailFragment : Fragment() {
                     crossfade(true)
                     crossfade(400)
                 }
+
+
+                val margin = convertPixelsToDp(8, requireContext())
+
+                movie?.genres?.forEach {
+                    val textView = TextView(requireContext())
+                    textView.text = it.name
+                    textView.setBackgroundColor(SurfaceColors.SURFACE_2.getColor(requireContext()))
+                    val layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply { setMargins(margin, margin, margin, margin) }
+                    textView.layoutParams = layoutParams
+
+                    val paddingHorizontal = convertPixelsToDp(16, requireContext())
+                    val paddingVertical = convertPixelsToDp(8, requireContext())
+                    textView.setPadding(
+                        paddingHorizontal,
+                        paddingVertical,
+                        paddingHorizontal,
+                        paddingVertical
+                    )
+
+                    binding.genres.addView(textView)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.similar.collect { movies ->
+                val similarMoviesAdapter = SimilarMovieAdapter(onMovieClick = {
+                    findNavController().navigate(
+                        MovieDetailFragmentDirections.actionMovieDetailFragmentSelf(
+                            it.id
+                        )
+                    )
+                })
+                binding.similarMoviesList.adapter = similarMoviesAdapter
+                binding.similarMoviesList.layoutManager = LinearLayoutManager(
+                    requireContext(),
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
+                similarMoviesAdapter.submitList(movies)
             }
         }
     }
+}
+
+private fun convertPixelsToDp(px: Int, context: Context): Int {
+    return (px / (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT))
 }

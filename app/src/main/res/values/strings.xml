@@ -47,4 +47,5 @@
     <string name="image_poster">Image Poster</string>
     <string name="apply_filter">Apply filter</string>
     <string name="language">Language</string>
+    <string name="similar">Similar</string>
 </resources>

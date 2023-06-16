@@ -38,7 +38,7 @@ class DiscoverVM @Inject constructor(
     }
 
     fun setLanguage(language: String) {
-        _languageFilter.value = language
+        _languageFilter.value = languages.value.find { it.iso == language }?.name
 
         viewModelScope.launch {
             _movies.value = repository.getMovies(language)
