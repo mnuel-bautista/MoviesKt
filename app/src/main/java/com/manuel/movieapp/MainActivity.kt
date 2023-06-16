@@ -1,16 +1,19 @@
 package com.manuel.movieapp
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowCompat
+import androidx.core.view.updateLayoutParams
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import com.manuel.movieapp.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,10 +33,22 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAnchorView(R.id.fab)
-                .setAction("Action", null).show()
+        binding.fab.visibility = View.GONE
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.movieDetailFragment -> {
+                    binding.appBarLayout.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                        height = 0
+                    }
+                    binding.appBarLayout.setExpanded(false, false)
+                }
+
+                else -> {
+                    binding.appBarLayout.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                        height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                    }
+                }
+            }
         }
     }
 

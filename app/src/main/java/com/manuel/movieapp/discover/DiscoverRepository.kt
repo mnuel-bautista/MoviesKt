@@ -13,10 +13,17 @@ class DiscoverRepository @Inject constructor(
     private val client: OkHttpClient
 ) {
 
-    private val url = "https://api.themoviedb.org/3/discover/movie?page=1"
+    private val url = "https://api.themoviedb.org/3/discover/movie?page=1&sort_by=popularity.desc"
 
-    suspend fun getMovies(): List<Movie> {
+    /**
+     * @param language Filter movies by this language. If not specified, all languages will be returned.
+     * */
+    suspend fun getMovies(
+        language: String? = null
+    ): List<Movie> {
         val movies = withContext(Dispatchers.IO) {
+            val url = if (language != null) "$url&language=$language" else url
+
             val request = okhttp3.Request.Builder()
                 .url(url)
                 .get()

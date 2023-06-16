@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import coil.load
 import com.manuel.movieapp.MoviesApplication
+import com.manuel.movieapp.R
 import com.manuel.movieapp.databinding.FragmentMovieDetailBinding
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,11 +51,18 @@ class MovieDetailFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movie.collect { movie ->
-                binding.movieTitle.text = movie?.title
+                binding.collapsingToolbar.title = movie?.title
+                binding.collapsingToolbar.setExpandedTitleColor(resources.getColor(R.color.white))
+                binding.toolbar.setNavigationIconTint(resources.getColor(R.color.white))
+                binding.toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24)
+                binding.toolbar.setNavigationOnClickListener {
+                    findNavController().navigateUp()
+                }
                 binding.movieOverview.text = movie?.overview
                 binding.moviePoster.load("https://image.tmdb.org/t/p/w500${movie?.posterPath}") {
+                    placeholder(R.drawable.poster_placeholder)
                     crossfade(true)
-                    crossfade(1000)
+                    crossfade(400)
                 }
             }
         }

@@ -44,4 +44,7 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="discover_fragment_label">Discover</string>
+    <string name="image_poster">Image Poster</string>
+    <string name="apply_filter">Apply filter</string>
+    <string name="language">Language</string>
 </resources>
