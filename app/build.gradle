@@ -21,6 +21,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "API_KEY", localProperties['apiKey']
+        buildConfigField "Integer", "ACCOUNT_ID", localProperties['accountId']
     }
 
     buildTypes {

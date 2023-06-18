@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.updateLayoutParams
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +19,6 @@ import com.google.android.material.elevation.SurfaceColors
 import com.manuel.movieapp.MoviesApplication
 import com.manuel.movieapp.R
 import com.manuel.movieapp.databinding.FragmentMovieDetailBinding
-import com.manuel.movieapp.discover.MovieAdapter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -118,6 +117,28 @@ class MovieDetailFragment : Fragment() {
                 )
                 similarMoviesAdapter.submitList(movies)
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.accountState.collect { accountState ->
+                if (accountState?.watchlist == true) {
+                    binding.addToWatchlist.text = getString(R.string.remove_from_watchlist)
+                    binding.addToWatchlist.icon = ResourcesCompat.getDrawable(
+                        resources, R.drawable.baseline_playlist_add_check_24,
+                        requireContext().theme
+                    )
+                } else {
+                    binding.addToWatchlist.text = getString(R.string.add_to_watchlist)
+                    binding.addToWatchlist.icon = ResourcesCompat.getDrawable(
+                        resources, R.drawable.baseline_playlist_add_24,
+                        requireContext().theme
+                    )
+                }
+            }
+        }
+
+        binding.addToWatchlist.setOnClickListener {
+            viewModel.toggleWatchlist()
         }
     }
 }
