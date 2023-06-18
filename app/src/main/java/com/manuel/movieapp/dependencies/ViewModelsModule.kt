@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.manuel.movieapp.discover.DiscoverVM
 import com.manuel.movieapp.movie.MovieDetailVM
+import com.manuel.movieapp.watchlist.WatchlistVM
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
@@ -28,6 +29,11 @@ abstract class ViewModelsModule {
     @IntoMap
     @ViewModelKey(MovieDetailVM::class)
     internal abstract fun movieDetailVM(viewModel: MovieDetailVM): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(WatchlistVM::class)
+    internal abstract fun watchlistVM(viewModel: WatchlistVM): ViewModel
 
 }
 

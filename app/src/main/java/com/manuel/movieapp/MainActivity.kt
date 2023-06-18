@@ -12,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.manuel.movieapp.databinding.ActivityMainBinding
 
 
@@ -30,8 +31,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
+        appBarConfiguration = AppBarConfiguration(
+            topLevelDestinationIds = setOf(R.id.DiscoveryFragment, R.id.watchlistFragment),
+            drawerLayout = binding.drawerLayout
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.navigationView.setupWithNavController(navController)
 
         binding.fab.visibility = View.GONE
         navController.addOnDestinationChangedListener { _, destination, _ ->

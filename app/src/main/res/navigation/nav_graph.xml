@@ -25,4 +25,13 @@
             android:id="@+id/action_movieDetailFragment_self"
             app:destination="@id/movieDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/watchlistFragment"
+        android:name="com.manuel.movieapp.watchlist.WatchlistFragment"
+        android:label="@string/watchlist"
+        tools:layout="@layout/fragment_watchlist" >
+        <action
+            android:id="@+id/action_watchlistFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
+    </fragment>
 </navigation>

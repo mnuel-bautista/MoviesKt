@@ -1,7 +1,12 @@
 package com.manuel.movieapp.watchlist
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.manuel.movieapp.BuildConfig
+import com.manuel.movieapp.common.Movie
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -13,10 +18,36 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 
 class WatchlistRepository @Inject constructor(
-    private val okHttpClient: OkHttpClient,
+    private val client: OkHttpClient,
 ){
 
     private val url = "https://api.themoviedb.org/3/account/${BuildConfig.ACCOUNT_ID}/watchlist"
+
+    private val moviesWatchlistUrl = "https://api.themoviedb.org/3/account/${BuildConfig.ACCOUNT_ID}/watchlist/movies"
+
+    suspend fun getWatchlist(): List<Movie> {
+        val movies = withContext(Dispatchers.IO) {
+
+            val request = Request.Builder()
+                .url(moviesWatchlistUrl)
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer ${BuildConfig.API_KEY}")
+                .build()
+
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val gson = Gson()
+                    val body = gson.fromJson(response.body!!.string(), JsonObject::class.java)
+
+                    return@withContext gson.fromJson(body["results"], Array<Movie>::class.java)
+                } else {
+                    throw Exception("Error getting movies")
+                }
+            }
+        }
+        return movies.toList()
+    }
 
     suspend fun addMovieToWatchlist(movieId: Int): AddToWatchListResponse {
         val body = """
@@ -36,7 +67,7 @@ class WatchlistRepository @Inject constructor(
             .build()
 
         return suspendCancellableCoroutine { cont ->
-            okHttpClient.newCall(request).enqueue(object: Callback {
+            client.newCall(request).enqueue(object: Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     cont.resume(AddToWatchListResponse.Error)
                 }
@@ -47,7 +78,7 @@ class WatchlistRepository @Inject constructor(
             })
 
             cont.invokeOnCancellation {
-                okHttpClient.newCall(request).cancel()
+                client.newCall(request).cancel()
             }
         }
     }
@@ -70,7 +101,7 @@ class WatchlistRepository @Inject constructor(
             .build()
 
         return suspendCancellableCoroutine { cont ->
-            okHttpClient.newCall(request).enqueue(object: Callback {
+            client.newCall(request).enqueue(object: Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     cont.resume(RemoveFromWatchListResponse.Error)
                 }
@@ -81,7 +112,7 @@ class WatchlistRepository @Inject constructor(
             })
 
             cont.invokeOnCancellation {
-                okHttpClient.newCall(request).cancel()
+                client.newCall(request).cancel()
             }
         }
     }
